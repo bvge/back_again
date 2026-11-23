@@ -53,6 +53,11 @@
   gap: 18px;
 }
 
+.gallery .section-heading p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .gallery-photo {
   display: block;
   width: 100%;
