@@ -1,14 +1,22 @@
 const toggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.nav');
-toggle.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
+function setNavigationOpen(open) {
+  nav.classList.toggle('open', open);
   toggle.setAttribute('aria-expanded', String(open));
   toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
   toggle.textContent = open ? '✕' : '☰';
+}
+
+toggle.addEventListener('click', () => {
+  setNavigationOpen(!nav.classList.contains('open'));
 });
-nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-  nav.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); toggle.textContent = '☰';
-}));
+nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setNavigationOpen(false)));
+document.querySelector('.header').addEventListener('keydown', event => {
+  if (event.key === 'Escape' && nav.classList.contains('open')) {
+    setNavigationOpen(false);
+    toggle.focus();
+  }
+});
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -48,10 +56,10 @@ setupCarousel(
 
 // Replace the sample URLs with paths to your work photos and update their descriptions.
 const galleryPhotos = [
-  { src: 'https://picsum.photos/seed/kingdomnow-1/800/600', alt: 'Sample gallery photo 1' },
-  { src: 'https://picsum.photos/seed/kingdomnow-2/800/600', alt: 'Sample gallery photo 2' },
-  { src: 'https://picsum.photos/seed/kingdomnow-3/800/600', alt: 'Sample gallery photo 3' },
-  { src: 'https://picsum.photos/seed/kingdomnow-4/800/600', alt: 'Sample gallery photo 4' },
+  { src: 'images/IMG-20261124-WA0001.jpg', alt: 'Kitchenette with gray cabinets and a stainless steel refrigerator' },
+  { src: 'images/IMG-20261124-WA0002.jpg', alt: 'Room with a green accent wall and wood-look flooring' },
+  { src: 'images/IMG-20261124-WA0003.jpg', alt: 'Hallway with colorful doors and a wall mural' },
+  { src: 'images/IMG-20261124-WA0007.jpg', alt: 'Kitchen with dark cabinets and a dining area' },
   { src: 'https://picsum.photos/seed/kingdomnow-5/800/600', alt: 'Sample gallery photo 5' },
   { src: 'https://picsum.photos/seed/kingdomnow-6/800/600', alt: 'Sample gallery photo 6' },
   { src: 'https://picsum.photos/seed/kingdomnow-7/800/600', alt: 'Sample gallery photo 7' },
@@ -126,7 +134,7 @@ form.addEventListener('submit', event => {
   event.preventDefault();
   const data = new FormData(form);
   const subject = encodeURIComponent(`Cleaning quote request — ${data.get('service')}`);
-  const body = encodeURIComponent(`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')}\nService: ${data.get('service')}\nDetails: ${data.get('message')}`);
+  const body = encodeURIComponent(`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')}\nService: ${data.get('service')}\nService location: ${data.get('location')}\nDetails: ${data.get('message')}`);
   // Replace the placeholder address with the business email before publishing.
   const businessEmail = 'YOUR_EMAIL@example.com';
   if (businessEmail === 'YOUR_EMAIL@example.com') {
