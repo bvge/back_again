@@ -11,6 +11,34 @@ nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
 }));
 document.getElementById('year').textContent = new Date().getFullYear();
 
+const serviceGrid = document.getElementById('service-grid');
+const servicePrevious = document.getElementById('service-prev');
+const serviceNext = document.getElementById('service-next');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function updateServiceArrows() {
+  const end = serviceGrid.scrollWidth - serviceGrid.clientWidth;
+  servicePrevious.setAttribute('aria-disabled', String(serviceGrid.scrollLeft <= 1));
+  serviceNext.setAttribute('aria-disabled', String(serviceGrid.scrollLeft >= end - 1));
+}
+
+function scrollServices(button, direction) {
+  if (button.getAttribute('aria-disabled') === 'true') return;
+  const [first, second] = serviceGrid.children;
+  serviceGrid.scrollBy({
+    left: direction * (second.offsetLeft - first.offsetLeft),
+    behavior: reduceMotion.matches ? 'instant' : 'smooth',
+  });
+}
+
+servicePrevious.addEventListener('click', () => scrollServices(servicePrevious, -1));
+serviceNext.addEventListener('click', () => scrollServices(serviceNext, 1));
+serviceGrid.addEventListener('scroll', updateServiceArrows, { passive: true });
+servicePrevious.hidden = serviceNext.hidden = false;
+serviceGrid.parentElement.classList.add('has-arrows');
+new ResizeObserver(updateServiceArrows).observe(serviceGrid);
+updateServiceArrows();
+
 // Replace the sample URLs with paths to your work photos and update their descriptions.
 const galleryPhotos = [
   { src: 'https://picsum.photos/seed/kingdomnow-1/800/600', alt: 'Sample gallery photo 1' },
