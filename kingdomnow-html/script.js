@@ -11,33 +11,40 @@ nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
 }));
 document.getElementById('year').textContent = new Date().getFullYear();
 
-const serviceGrid = document.getElementById('service-grid');
-const servicePrevious = document.getElementById('service-prev');
-const serviceNext = document.getElementById('service-next');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-function updateServiceArrows() {
-  const end = serviceGrid.scrollWidth - serviceGrid.clientWidth;
-  servicePrevious.setAttribute('aria-disabled', String(serviceGrid.scrollLeft <= 1));
-  serviceNext.setAttribute('aria-disabled', String(serviceGrid.scrollLeft >= end - 1));
+function setupCarousel(track, previous, next) {
+  const [first, second] = track.children;
+  if (!second) return;
+
+  function updateArrows() {
+    const end = track.scrollWidth - track.clientWidth;
+    previous.setAttribute('aria-disabled', String(track.scrollLeft <= 1));
+    next.setAttribute('aria-disabled', String(track.scrollLeft >= end - 1));
+  }
+
+  function scroll(button, direction) {
+    if (button.getAttribute('aria-disabled') === 'true') return;
+    track.scrollBy({
+      left: direction * (second.offsetLeft - first.offsetLeft),
+      behavior: reduceMotion.matches ? 'instant' : 'smooth',
+    });
+  }
+
+  previous.addEventListener('click', () => scroll(previous, -1));
+  next.addEventListener('click', () => scroll(next, 1));
+  track.addEventListener('scroll', updateArrows, { passive: true });
+  previous.hidden = next.hidden = false;
+  track.parentElement.classList.add('has-arrows');
+  new ResizeObserver(updateArrows).observe(track);
+  updateArrows();
 }
 
-function scrollServices(button, direction) {
-  if (button.getAttribute('aria-disabled') === 'true') return;
-  const [first, second] = serviceGrid.children;
-  serviceGrid.scrollBy({
-    left: direction * (second.offsetLeft - first.offsetLeft),
-    behavior: reduceMotion.matches ? 'instant' : 'smooth',
-  });
-}
-
-servicePrevious.addEventListener('click', () => scrollServices(servicePrevious, -1));
-serviceNext.addEventListener('click', () => scrollServices(serviceNext, 1));
-serviceGrid.addEventListener('scroll', updateServiceArrows, { passive: true });
-servicePrevious.hidden = serviceNext.hidden = false;
-serviceGrid.parentElement.classList.add('has-arrows');
-new ResizeObserver(updateServiceArrows).observe(serviceGrid);
-updateServiceArrows();
+setupCarousel(
+  document.getElementById('service-grid'),
+  document.getElementById('service-prev'),
+  document.getElementById('service-next'),
+);
 
 // Replace the sample URLs with paths to your work photos and update their descriptions.
 const galleryPhotos = [
@@ -59,62 +66,58 @@ const galleryPhotos = [
   { src: 'https://picsum.photos/seed/kingdomnow-16/800/600', alt: 'Sample gallery photo 16' },
 ];
 
-const gallerySlots = document.querySelectorAll('.gallery-tile');
-const galleryNext = document.getElementById('gallery-next');
-const galleryStatus = document.getElementById('gallery-status');
+const galleryTrack = document.getElementById('gallery-photos');
+const galleryTemplate = document.getElementById('gallery-tile-template');
 const galleryViewer = document.getElementById('gallery-viewer');
 const viewerPhoto = galleryViewer.querySelector('.gallery-viewer-photo');
 const viewerStatus = document.getElementById('gallery-viewer-status');
 const previousPhoto = document.getElementById('gallery-previous-photo');
 const nextPhoto = document.getElementById('gallery-next-photo');
-let galleryStart = 0;
 let viewerIndex = 0;
 
-function showGalleryPhotos() {
-  const photos = galleryPhotos.slice(galleryStart, galleryStart + gallerySlots.length);
-  gallerySlots.forEach((slot, index) => {
-    const photo = photos[index];
-    slot.hidden = !photo;
-    if (photo) {
-      slot.setAttribute('aria-label', `View photo ${galleryStart + index + 1}: ${photo.alt}`);
-      slot.querySelector('img').src = photo.src;
-    }
-  });
-  galleryStatus.textContent = photos.length
-    ? `Photos ${galleryStart + 1}–${galleryStart + photos.length} of ${galleryPhotos.length}`
-    : 'No photos available';
-}
-
-galleryNext.hidden = galleryPhotos.length <= gallerySlots.length;
-galleryNext.addEventListener('click', () => {
-  galleryStart += gallerySlots.length;
-  if (galleryStart >= galleryPhotos.length) galleryStart = 0;
-  showGalleryPhotos();
-});
-showGalleryPhotos();
-
-function showViewerPhoto(index) {
+function showViewerPhoto(index, direction = 0) {
   viewerIndex = (index + galleryPhotos.length) % galleryPhotos.length;
   const photo = galleryPhotos[viewerIndex];
   viewerPhoto.alt = photo.alt;
   viewerPhoto.src = photo.src;
+  if (direction && !reduceMotion.matches) {
+    viewerPhoto.getAnimations().forEach(animation => animation.cancel());
+    viewerPhoto.animate(
+      [
+        { transform: `translateX(${direction * 12}%)`, opacity: 0 },
+        { transform: 'translateX(0)', opacity: 1 },
+      ],
+      { duration: 240, easing: 'ease-out' },
+    );
+  }
   viewerStatus.textContent = `Photo ${viewerIndex + 1} of ${galleryPhotos.length}`;
 }
 
-gallerySlots.forEach((slot, index) => {
-  slot.addEventListener('click', () => {
-    showViewerPhoto(galleryStart + index);
+galleryPhotos.forEach((photo, index) => {
+  const tile = galleryTemplate.content.firstElementChild.cloneNode(true);
+  tile.setAttribute('aria-label', `View photo ${index + 1}: ${photo.alt}`);
+  tile.querySelector('img').src = photo.src;
+  tile.addEventListener('click', () => {
+    showViewerPhoto(index);
     galleryViewer.showModal();
   });
+  galleryTrack.append(tile);
 });
 
+setupCarousel(
+  galleryTrack,
+  document.getElementById('gallery-prev'),
+  document.getElementById('gallery-next'),
+);
+
 previousPhoto.disabled = nextPhoto.disabled = galleryPhotos.length <= 1;
-previousPhoto.addEventListener('click', () => showViewerPhoto(viewerIndex - 1));
-nextPhoto.addEventListener('click', () => showViewerPhoto(viewerIndex + 1));
+previousPhoto.addEventListener('click', () => showViewerPhoto(viewerIndex - 1, -1));
+nextPhoto.addEventListener('click', () => showViewerPhoto(viewerIndex + 1, 1));
 galleryViewer.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
-    showViewerPhoto(viewerIndex + (event.key === 'ArrowLeft' ? -1 : 1));
+    const direction = event.key === 'ArrowLeft' ? -1 : 1;
+    showViewerPhoto(viewerIndex + direction, direction);
   }
 });
 

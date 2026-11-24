@@ -35,26 +35,24 @@
         <h2 id="gallery-heading">Spaces we’ve cleaned</h2>
         <p>Take a look at our work in homes, offices and recently renovated spaces. From scrubbing kitchens and bathrooms to preparing properties for move-in and clearing away post-construction dust, these photos show the care we bring to each job.</p>
       </div>
-      <div class="gallery-grid" id="gallery-photos">
-        <button class="gallery-tile" type="button" hidden><img class="gallery-photo" alt="" width="800" height="600" loading="lazy"><span aria-hidden="true">⤢</span></button>
-        <button class="gallery-tile" type="button" hidden><img class="gallery-photo" alt="" width="800" height="600" loading="lazy"><span aria-hidden="true">⤢</span></button>
-        <button class="gallery-tile" type="button" hidden><img class="gallery-photo" alt="" width="800" height="600" loading="lazy"><span aria-hidden="true">⤢</span></button>
-        <button class="gallery-tile" type="button" hidden><img class="gallery-photo" alt="" width="800" height="600" loading="lazy"><span aria-hidden="true">⤢</span></button>
+      <div class="service-carousel">
+        <button class="service-arrow" id="gallery-prev" type="button" aria-label="Scroll gallery left" aria-controls="gallery-photos" hidden>&lsaquo;</button>
+        <div class="gallery-grid" id="gallery-photos" tabindex="0" role="region" aria-label="Gallery photos"></div>
+        <button class="service-arrow" id="gallery-next" type="button" aria-label="Scroll gallery right" aria-controls="gallery-photos" hidden>&rsaquo;</button>
       </div>
-      <div class="gallery-controls">
-        <span id="gallery-status" role="status"></span>
-        <button class="btn btn-navy" id="gallery-next" type="button" aria-controls="gallery-photos" hidden>Next</button>
-      </div>
+      <template id="gallery-tile-template">
+        <button class="gallery-tile" type="button"><img class="gallery-photo" alt="" width="800" height="600" loading="lazy"><span aria-hidden="true">&#10530;</span></button>
+      </template>
       <dialog class="gallery-viewer" id="gallery-viewer" aria-label="Photo viewer">
         <form method="dialog" class="gallery-viewer-close">
           <button type="submit" autofocus>Close</button>
         </form>
-        <img class="gallery-viewer-photo" alt="">
-        <div class="gallery-viewer-controls">
-          <button type="button" id="gallery-previous-photo">Previous</button>
-          <span id="gallery-viewer-status" role="status"></span>
-          <button type="button" id="gallery-next-photo">Next</button>
+        <div class="gallery-viewer-stage">
+          <button class="service-arrow" type="button" id="gallery-previous-photo" aria-label="Previous photo">&lsaquo;</button>
+          <img class="gallery-viewer-photo" alt="">
+          <button class="service-arrow" type="button" id="gallery-next-photo" aria-label="Next photo">&rsaquo;</button>
         </div>
+        <span id="gallery-viewer-status" role="status"></span>
       </dialog>
     </section>
     <section class="about section" id="about"><div class="about-image"><div class="image-caption">A little more care in every corner.</div></div><div class="about-copy"><p class="eyebrow">THE KINGDOMNOW DIFFERENCE</p><h2>We believe clean spaces make room for <em>better things.</em></h2><p>At Kingdomnow Cleaning Services, our goal is simple: deliver dependable cleaning with care, respect and attention to detail. We treat every space as if it matters — because it does.</p><p>Whether you need help at home or at work, we're here to make your environment feel refreshed and ready for what comes next.</p><a class="btn btn-navy" href="#contact">Get to know us <span>→</span></a></div></section>
