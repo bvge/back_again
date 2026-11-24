@@ -12,7 +12,6 @@ OPEN IN WINDOWS VS CODE
 3. Open index.html in a browser. For live preview, install the VS Code extension "Live Server", right-click index.html, and choose "Open with Live Server".
 
 BEFORE PUBLISHING
-- Replace YOUR_EMAIL@example.com in script.js with the real business email.
 - Add the business phone number and service locations in the footer/contact section.
-- The quote form currently uses the visitor's email app (mailto). For automatic online submissions, connect a form service or backend.
+- Deploy send-quote.php alongside index.html on PHP-enabled Hostinger hosting. The form uses the hosting server's PHP mail function to send requests to Info@kingdomnowcleaning.org. Submit a test request on the hosted site and confirm it arrives in that inbox.
 - Replace stock photos and update service descriptions to match the actual business.

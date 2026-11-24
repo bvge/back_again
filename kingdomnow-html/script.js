@@ -20,6 +20,29 @@ document.querySelector('.header').addEventListener('keydown', event => {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const mobileServices = window.matchMedia('(max-width: 700px)');
+
+document.querySelectorAll('.service-details').forEach(details => {
+  const summary = details.querySelector('summary');
+  const title = summary.querySelector('h3');
+  const description = details.querySelector('p');
+  const copy = document.createElement('div');
+  copy.className = 'service-copy';
+
+  function updateServiceCard() {
+    if (mobileServices.matches) {
+      copy.append(title, description);
+      details.replaceWith(copy);
+    } else if (copy.isConnected) {
+      summary.append(title);
+      details.append(description);
+      copy.replaceWith(details);
+    }
+  }
+
+  mobileServices.addEventListener('change', updateServiceCard);
+  updateServiceCard();
+});
 
 function setupCarousel(track, previous, next) {
   const [first, second] = track.children;
@@ -54,24 +77,17 @@ setupCarousel(
   document.getElementById('service-next'),
 );
 
-// Replace the sample URLs with paths to your work photos and update their descriptions.
 const galleryPhotos = [
   { src: 'images/IMG-20261124-WA0001.jpg', alt: 'Kitchenette with gray cabinets and a stainless steel refrigerator' },
   { src: 'images/IMG-20261124-WA0002.jpg', alt: 'Room with a green accent wall and wood-look flooring' },
   { src: 'images/IMG-20261124-WA0003.jpg', alt: 'Hallway with colorful doors and a wall mural' },
   { src: 'images/IMG-20261124-WA0007.jpg', alt: 'Kitchen with dark cabinets and a dining area' },
-  { src: 'https://picsum.photos/seed/kingdomnow-5/800/600', alt: 'Sample gallery photo 5' },
-  { src: 'https://picsum.photos/seed/kingdomnow-6/800/600', alt: 'Sample gallery photo 6' },
-  { src: 'https://picsum.photos/seed/kingdomnow-7/800/600', alt: 'Sample gallery photo 7' },
-  { src: 'https://picsum.photos/seed/kingdomnow-8/800/600', alt: 'Sample gallery photo 8' },
-  { src: 'https://picsum.photos/seed/kingdomnow-9/800/600', alt: 'Sample gallery photo 9' },
-  { src: 'https://picsum.photos/seed/kingdomnow-10/800/600', alt: 'Sample gallery photo 10' },
-  { src: 'https://picsum.photos/seed/kingdomnow-11/800/600', alt: 'Sample gallery photo 11' },
-  { src: 'https://picsum.photos/seed/kingdomnow-12/800/600', alt: 'Sample gallery photo 12' },
-  { src: 'https://picsum.photos/seed/kingdomnow-13/800/600', alt: 'Sample gallery photo 13' },
-  { src: 'https://picsum.photos/seed/kingdomnow-14/800/600', alt: 'Sample gallery photo 14' },
-  { src: 'https://picsum.photos/seed/kingdomnow-15/800/600', alt: 'Sample gallery photo 15' },
-  { src: 'https://picsum.photos/seed/kingdomnow-16/800/600', alt: 'Sample gallery photo 16' },
+  { src: 'images/office-suites-west.jpg', alt: 'Office Suites West building exterior in Plainfield, Indiana' },
+  { src: 'images/pic_7.jpg', alt: 'Restroom with a polished dark tile floor' },
+  { src: 'images/pic_8.jpg', alt: 'Exterior of a two-story house with blue and white siding' },
+  { src: 'images/pic_9.jpg', alt: 'Break room with a round table and a polished dark floor' },
+  { src: 'images/pic_10.jpg', alt: 'Close-up of a white-framed window reflecting a nearby house' },
+  { src: 'images/pic_11.jpg', alt: 'Room with white cabinets, a yellow sink counter, and light wood-look flooring' },
 ];
 
 const galleryTrack = document.getElementById('gallery-photos');
@@ -130,16 +146,26 @@ galleryViewer.addEventListener('keydown', event => {
 });
 
 const form = document.getElementById('quoteForm');
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
-  const data = new FormData(form);
-  const subject = encodeURIComponent(`Cleaning quote request — ${data.get('service')}`);
-  const body = encodeURIComponent(`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')}\nService: ${data.get('service')}\nService location: ${data.get('location')}\nDetails: ${data.get('message')}`);
-  // Replace the placeholder address with the business email before publishing.
-  const businessEmail = 'YOUR_EMAIL@example.com';
-  if (businessEmail === 'YOUR_EMAIL@example.com') {
-    form.querySelector('.form-message').textContent = 'Your form is working. Add your business email in script.js to receive quote requests.';
-    return;
+  const button = form.querySelector('button[type="submit"]');
+  const status = form.querySelector('.form-message');
+  if (button.disabled) return;
+
+  button.disabled = true;
+  status.textContent = 'Sending your request…';
+  try {
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+    });
+    const result = await response.json();
+    if (!response.ok || result.ok !== true) throw new Error('Quote submission failed');
+    form.reset();
+    status.textContent = 'Thanks! Your quote request was submitted. We’ll be in touch soon.';
+  } catch {
+    status.textContent = 'We couldn’t send your request. Please try again or call +1 317-668-9274.';
+  } finally {
+    button.disabled = false;
   }
-  window.location.href = `mailto:${businessEmail}?subject=${subject}&body=${body}`;
 });
