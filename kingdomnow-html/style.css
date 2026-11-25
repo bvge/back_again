@@ -154,7 +154,9 @@
   grid-auto-flow: column;
   grid-auto-columns: calc((100% - 36px) / 3);
   gap: 18px;
+  padding: 8px 10px 14px;
   overflow-x: auto;
+  scroll-padding-inline: 10px;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
@@ -213,6 +215,8 @@
   position: relative;
   padding: 0;
   border: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 45%);
   overflow: hidden;
   cursor: zoom-in;
 }
