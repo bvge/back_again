@@ -428,6 +428,11 @@
 }
 
 @media (max-width: 700px) {
+  .gallery .section-heading {
+    border-top: 1px solid rgb(16 44 89 / 18%);
+    padding-top: 24px;
+  }
+
   #services,
   .gallery {
     scroll-margin-top: 76px;
