@@ -49,6 +49,20 @@
   align-items: center;
 }
 
+.hero-phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--gold-light);
+  background: rgb(8 29 60 / 40%);
+  color: var(--gold-light);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .quick-links .text-link {
   display: inline-flex;
   align-items: center;
@@ -97,6 +111,10 @@
 
   .hero-primary-actions {
     display: contents;
+  }
+
+  .hero-phone {
+    display: none;
   }
 
   .hero-primary-actions .btn {
@@ -435,10 +453,17 @@
 }
 
 .call-float {
+  display: none;
   left: calc(16px + env(safe-area-inset-left, 0px));
   background: var(--gold);
   color: var(--navy2);
   border: 1px solid var(--gold-light);
+}
+
+@media (max-width: 700px) {
+  .call-float {
+    display: grid;
+  }
 }
 
 .whatsapp-float:hover {
