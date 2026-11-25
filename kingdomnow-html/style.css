@@ -49,21 +49,6 @@
   align-items: center;
 }
 
-.hero-phone {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 6px 10px;
-  border: 1px solid var(--gold-light);
-  background: rgb(8 29 60 / 40%);
-  color: var(--gold-light);
-  font-size: 16px;
-  font-weight: 700;
-  text-align: center;
-  text-decoration: none;
-}
-
 .quick-links .text-link {
   display: inline-flex;
   align-items: center;
@@ -103,7 +88,7 @@
 
   .hero-actions {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     overflow: visible;
     padding: 0;
@@ -120,19 +105,13 @@
     text-align: center;
   }
 
-  .hero-phone-number {
-    display: none;
-  }
-
   .quick-links {
     display: grid;
-    grid-column: span 2;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     margin-inline-start: 0;
   }
 
-  .hero-phone,
   .quick-links .text-link {
     padding-inline: 4px;
     font-size: 13px;
@@ -436,9 +415,9 @@
     scroll-margin-top: 76px;
   }
 }
-.whatsapp-float {
+.whatsapp-float,
+.call-float {
   position: fixed;
-  right: calc(16px + env(safe-area-inset-right, 0px));
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   z-index: 30;
   display: grid;
@@ -447,30 +426,40 @@
   height: 56px;
   border-radius: 50%;
   color: #fff;
-  background: #087f5b;
   box-shadow: 0 4px 16px #081d3c40;
+}
+
+.whatsapp-float {
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  background: #087f5b;
+}
+
+.call-float {
+  left: calc(16px + env(safe-area-inset-left, 0px));
+  background: var(--gold);
+  color: var(--navy2);
+  border: 1px solid var(--gold-light);
 }
 
 .whatsapp-float:hover {
   background: #06694b;
 }
 
-.whatsapp-float:focus-visible {
+.whatsapp-float:focus-visible,
+.call-float:focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .whatsapp-float {
-    animation: whatsapp-bounce 10s ease-in-out infinite;
+    animation: whatsapp-bounce 900ms ease-in-out;
   }
 }
 
 @keyframes whatsapp-bounce {
-  0%, 9%, 100% { transform: translateY(0); }
-  2% { transform: translateY(-10px); }
-  4% { transform: translateY(0); }
-  6% { transform: translateY(-5px); }
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-10px); }
 }
 
 .hero {
@@ -663,6 +652,10 @@
   .quote-form :is(input, select, textarea) {
     font-size: 16px;
     min-height: 44px;
+  }
+
+  .quote-promise {
+    text-align: center;
   }
 
   footer {
