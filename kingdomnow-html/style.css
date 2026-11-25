@@ -455,6 +455,16 @@
   .whatsapp-float {
     animation: whatsapp-bounce 900ms ease-in-out;
   }
+
+  .call-float svg {
+    animation: call-ring 10s ease-in-out 10s infinite;
+  }
+}
+
+@keyframes call-ring {
+  0%, 6%, 100% { transform: rotate(0); }
+  1%, 3%, 5% { transform: rotate(-15deg); }
+  2%, 4% { transform: rotate(15deg); }
 }
 
 @keyframes whatsapp-bounce {
